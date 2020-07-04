@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="350dp"
-    android:layout_height="220dp"
+    android:layout_height="250dp"
     android:background="@drawable/back_2conner">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="350dp"
-        android:layout_height="220dp"
+        android:layout_height="250dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -30,7 +30,9 @@
             android:text="1. 点击+号可以添加运动项目
 \n2. 长按+号可以删除所有运动条目
 \n3. 长按单个运动条目 可以删除该条目
-\n4.  单击 已完成*组  可以查看运动历史记录"
+\n4. 单击单个运动条目 开始这个动作的运动计时
+\n5. 单个运动计时结束后 会自动统计次数
+"
             android:textColor="@color/colorWhite"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -40,7 +42,7 @@
             android:id="@+id/tv_sure"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:layout_marginTop="165dp"
+            android:layout_marginTop="193dp"
             android:background="@drawable/btn"
             android:gravity="center"
             android:text="确  定"

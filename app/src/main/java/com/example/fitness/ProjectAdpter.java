@@ -63,6 +63,7 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
         int wcolor = ContextCompat.getColor(context, R.color.colorWhite);
         int pcolor = ContextCompat.getColor(context, R.color.colorPrimary);
         holder.text.setTextColor(select ? pcolor : wcolor);
+        holder.text.setTextSize(select ? 25 : 22);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

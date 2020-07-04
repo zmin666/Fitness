@@ -1,14 +1,9 @@
 package com.example.fitness;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,12 +11,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fitness.dialog.AddDialog;
 import com.example.fitness.dialog.TipsDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     private TextView textView;
@@ -32,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<SportBean> project = new ArrayList<>();
     private ProjectAdpter projectAdpter;
     private CountDownTimer timer;
-    private static final String DATA = "data";
     private int index;
     private FloatingActionButton fab;
+    private static final String DATA_PROJECT = "data_project";
+    private String strDay;
+    private long currentTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         tvTime = (TextView) findViewById(R.id.tvTime);
         tvCount = (TextView) findViewById(R.id.tv_count);
         fab = findViewById(R.id.fab);
+        strDay = String.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         projectAdpter = new ProjectAdpter(project, this);
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showTipsDialog() {
-        int tips = SPUtils.getInstance().getInt("tips", 3);
+        int tips = SPUtils.getInstance().getInt("tips", 10);
         if (tips > 0) {
             TipsDialog tipsDialog = new TipsDialog(this);
             tipsDialog.show();
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
             public void longClickItem(String s, int position) {
                 project.remove(position);
                 projectAdpter.notifyDataSetChanged();
+                notifyCount();
             }
         });
     }
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         timer = new CountDownTimer(time * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                currentTime = millisUntilFinished;
                 long l = millisUntilFinished / 1000;
                 tvTime.setText(change(l));
             }
@@ -126,13 +128,15 @@ public class MainActivity extends AppCompatActivity {
         project.get(index).setCount(count + 1);
         projectAdpter.notifyDataSetChanged();
 
-        int countTotol = 0;
+        int countTotal = 0;
         for (SportBean sportBean : project) {
-            countTotol += sportBean.getCount();
+            if (countTotal == 0) {
+                countTotal = sportBean.getCount();
+            } else {
+                countTotal = Math.min(countTotal, sportBean.getCount());
+            }
         }
-        int i = countTotol / (project.size());
-
-        tvCount.setText("已完成 " + i + " 组");
+        tvCount.setText("已完成 " + countTotal + " 组");
     }
 
     private void notifyProjectAdapter(int position) {
@@ -140,6 +144,42 @@ public class MainActivity extends AppCompatActivity {
             project.get(i).setSelect(i == position);
         }
         projectAdpter.notifyDataSetChanged();
+    }
+
+
+    @Override
+    protected void onPause() {
+        if (timer != null) {
+            timer.cancel();
+        }
+        SPUtils.getInstance().put("currentTime", currentTime / 1000);
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        long currentTime = SPUtils.getInstance().getLong("currentTime", project.get(index).getTime());
+        if (currentTime > 0) {
+            setTime((int) (currentTime + 1));
+        }
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        //保存成绩
+        Gson gson = new Gson();
+        String s = gson.toJson(project);
+        SPUtils.getInstance().put(strDay, s);
+
+        //保存运动项目
+        for (SportBean sportBean : project) {
+            sportBean.setCount(0);
+        }
+        Gson gson1 = new Gson();
+        String s1 = gson1.toJson(project);
+        SPUtils.getInstance().put(DATA_PROJECT, s1);
+        super.onStop();
     }
 
     public String change(long l) {
@@ -161,15 +201,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void initProject() {
         Gson gson = new Gson();
-        String data = SPUtils.getInstance().getString(DATA);
-        ArrayList<SportBean> list = gson.fromJson(data, new TypeToken<ArrayList<SportBean>>() {
+        String currentData = SPUtils.getInstance().getString(strDay);
+        String projectData = SPUtils.getInstance().getString(DATA_PROJECT);
+        ArrayList<SportBean> list = gson.fromJson(TextUtils.isEmpty(currentData) ? projectData : currentData, new TypeToken<ArrayList<SportBean>>() {
         }.getType());
         if (list != null) {
             for (SportBean sportBean : list) {
-                SportBean s = new SportBean(sportBean.getTime(), sportBean.getName(), sportBean.getStr());
-                project.add(s);
+                sportBean.setSelect(false);
             }
+            project.addAll(list);
         }
+
         if (project.size() == 0) {
             SportBean s1 = new SportBean(10, "开合跳", "个");
             SportBean s2 = new SportBean(10, "深蹲跳", "个");
@@ -183,32 +225,17 @@ public class MainActivity extends AppCompatActivity {
         projectAdpter.notifyDataSetChanged();
     }
 
-
     private void showMyStyle() {
-        @SuppressLint("InflateParams") View view = LayoutInflater.from(this).inflate(R.layout.layout_add_project, null);
-        final EditText name = view.findViewById(R.id.editText);
-        final EditText time = view.findViewById(R.id.editText2);
-        final RadioGroup rg = view.findViewById(R.id.RadioGroup1);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(view).setTitle("添加运动项目").setIcon(R.mipmap.ic_launcher)
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String str = rg.getCheckedRadioButtonId() == R.id.rb1 ? "秒" : "个";
-                                SportBean s = new SportBean(Integer.parseInt(time.getText().toString()), name.getText().toString(), str);
-                                project.add(s);
-                                projectAdpter.notifyDataSetChanged();
-                            }
-                        }
-                )
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-        builder.create().show();
+        AddDialog addDialog = new AddDialog(this);
+        addDialog.setOnListener(new AddDialog.OnListener() {
+            @Override
+            public void click(SportBean sportBean) {
+                project.add(sportBean);
+                projectAdpter.notifyDataSetChanged();
+                notifyCount();
+            }
+        });
+        addDialog.show();
     }
 
     public void setNavigationBar() {
@@ -216,16 +243,5 @@ public class MainActivity extends AppCompatActivity {
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
-    }
-
-    @Override
-    protected void onDestroy() {
-        for (SportBean sportBean : project) {
-            sportBean.setCount(0);
-        }
-        Gson gson = new Gson();
-        String s = gson.toJson(project);
-        SPUtils.getInstance().put(DATA, s);
-        super.onDestroy();
     }
 }

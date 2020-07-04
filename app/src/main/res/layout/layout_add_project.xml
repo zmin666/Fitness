@@ -5,51 +5,87 @@
     android:layout_width="300dp"
     android:layout_height="200dp">
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="250dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:hint="请输入运动名称"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="150dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:hint="请输入运动时长"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editText"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="请输入运动名称"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/RadioGroup1"
-        android:layout_width="100dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintLeft_toRightOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/editText">
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="150dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:hint="请输入运动时长"
+            android:inputType="number"
+            app:layout_constraintStart_toStartOf="@+id/editText"
+            app:layout_constraintTop_toBottomOf="@+id/editText" />
 
-        <RadioButton
-            android:id="@+id/rb1"
-            android:layout_width="wrap_content"
-            android:layout_height="100px"
-            android:checked="true"
-            android:text="秒" />
+        <RadioGroup
+            android:id="@+id/RadioGroup1"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toRightOf="@+id/editText2"
+            app:layout_constraintTop_toBottomOf="@+id/editText">
 
-        <RadioButton
-            android:id="@+id/rb2"
-            android:layout_width="wrap_content"
-            android:layout_height="100px"
-            android:text="个" />
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/rb1"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:checked="true"
+                android:text="秒" />
+
+            <RadioButton
+                android:id="@+id/rb2"
+                android:layout_width="wrap_content"
+                android:layout_height="100px"
+                android:text="个" />
+        </RadioGroup>
+
+
+        <TextView
+            android:id="@+id/tv_sure"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn"
+            android:gravity="center"
+            android:text="确  定"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_cancle"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn"
+            android:gravity="center"
+            android:text="取  消"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
