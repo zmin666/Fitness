@@ -25,6 +25,8 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
 
     interface Listener {
         void clickItem(String s,int position);
+
+        void longClickItem(String s,int position);
     }
 
     Listener listener;
@@ -60,6 +62,16 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
                 if (listener != null) {
                     listener.clickItem(s,position);
                 }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (listener != null) {
+                    listener.longClickItem(s,position);
+                }
+                return false;
             }
         });
     }

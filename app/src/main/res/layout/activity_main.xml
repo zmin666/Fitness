@@ -19,6 +19,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+   <TextView
+       android:id="@+id/tv_add"
+       android:textSize="12sp"
+       android:text="添加"
+       app:layout_constraintTop_toTopOf="@+id/textView"
+       app:layout_constraintLeft_toRightOf="@+id/textView"
+       android:layout_width="50dp"
+       android:gravity="center"
+       android:layout_marginStart="20dp"
+       android:textColor="@color/colorWhite"
+       android:layout_height="25dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="158dp"
@@ -29,15 +41,15 @@
 
     <TextView
         android:id="@+id/tvTime"
-        android:layout_width="343dp"
+        android:layout_width="420dp"
         android:layout_height="156dp"
         android:gravity="center"
         android:textColor="#FFFFFF"
-        android:textSize="100sp"
+        android:textSize="120sp"
+        android:text="00 : 00"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recyclerView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.498"
-        tools:text="10:00" />
+        app:layout_constraintVertical_bias="0.498" />
 </androidx.constraintlayout.widget.ConstraintLayout>
