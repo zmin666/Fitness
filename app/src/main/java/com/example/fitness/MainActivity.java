@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fitness.dialog.TipsDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,6 +56,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(projectAdpter);
         initListener();
         initProject();
+        showTipsDialog();
+    }
+
+    private void showTipsDialog() {
+        int tips = SPUtils.getInstance().getInt("tips", 3);
+        if (tips > 0) {
+            TipsDialog tipsDialog = new TipsDialog(this);
+            tipsDialog.show();
+            SPUtils.getInstance().put("tips", --tips);
+        }
     }
 
     private void initListener() {
@@ -174,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void showMyStyle() {
-        @SuppressLint("InflateParams") View view = LayoutInflater.from(this).inflate(R.layout.layout_test, null);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(this).inflate(R.layout.layout_add_project, null);
         final EditText name = view.findViewById(R.id.editText);
         final EditText time = view.findViewById(R.id.editText2);
         final RadioGroup rg = view.findViewById(R.id.RadioGroup1);

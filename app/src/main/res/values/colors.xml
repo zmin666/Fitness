@@ -3,6 +3,9 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-
     <color name="colorWhite">#ffffff</color>
+    <color name="public_color_transparent">#00000000</color>
+    <color name="colorBlack">#000000</color>
+    <color name="public_color_6D7278">#6D7278</color>
+    <color name="public_colorPrimaryDark">#37889F</color>
 </resources>
