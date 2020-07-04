@@ -7,49 +7,71 @@
     android:background="#000000"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="100dp"
+    <FrameLayout
+        android:id="@+id/fl"
+        android:layout_width="160dp"
         android:layout_height="25dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="56dp"
         android:background="#85FFFFFF"
         android:gravity="center"
-        android:text="热身"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-   <TextView
-       android:id="@+id/tv_add"
-       android:textSize="12sp"
-       android:text="添加"
-       app:layout_constraintTop_toTopOf="@+id/textView"
-       app:layout_constraintLeft_toRightOf="@+id/textView"
-       android:layout_width="50dp"
-       android:gravity="center"
-       android:layout_marginStart="20dp"
-       android:textColor="@color/colorWhite"
-       android:layout_height="25dp"/>
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:text="动作"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            android:text="已完成0组"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </FrameLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="158dp"
-        android:layout_height="275dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        android:layout_width="160dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        app:layout_constraintStart_toStartOf="@+id/fl"
+        app:layout_constraintTop_toBottomOf="@+id/fl" />
 
     <TextView
         android:id="@+id/tvTime"
-        android:layout_width="420dp"
-        android:layout_height="156dp"
+        android:layout_width="580dp"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="120sp"
         android:text="00 : 00"
+        android:textColor="#FFFFFF"
+        android:textSize="180sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recyclerView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.498" />
+
+    <!--   ic_dialog_email -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/recyclerView"
+        app:srcCompat="@android:drawable/ic_input_add" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,9 +24,9 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
     Context context;
 
     interface Listener {
-        void clickItem(String s,int position);
+        void clickItem(String s, int position);
 
-        void longClickItem(String s,int position);
+        void longClickItem(String s, int position);
     }
 
     Listener listener;
@@ -50,9 +50,16 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        final String s = list.get(position).getName();
-        boolean select = list.get(position).select;
+        SportBean sportBean = list.get(position);
+        final String s = sportBean.getName();
+        boolean select = sportBean.select;
+        int count = sportBean.getCount();
         holder.text.setText(s);
+        if (count > 0) {
+            holder.textCount.setText("+ " + count+"次");
+        } else {
+            holder.textCount.setText("");
+        }
         int wcolor = ContextCompat.getColor(context, R.color.colorWhite);
         int pcolor = ContextCompat.getColor(context, R.color.colorPrimary);
         holder.text.setTextColor(select ? pcolor : wcolor);
@@ -60,7 +67,7 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.clickItem(s,position);
+                    listener.clickItem(s, position);
                 }
             }
         });
@@ -69,9 +76,9 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
             @Override
             public boolean onLongClick(View v) {
                 if (listener != null) {
-                    listener.longClickItem(s,position);
+                    listener.longClickItem(s, position);
                 }
-                return false;
+                return true;
             }
         });
     }
@@ -84,10 +91,12 @@ public class ProjectAdpter extends RecyclerView.Adapter<ProjectAdpter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView text;
+        private TextView textCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(R.id.text);
+            textCount = (TextView) itemView.findViewById(R.id.text_count);
         }
     }
 }

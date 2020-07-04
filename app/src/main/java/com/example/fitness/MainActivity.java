@@ -1,7 +1,6 @@
 package com.example.fitness;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -11,50 +10,74 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private RecyclerView recyclerView;
     private TextView tvTime;
-    private TextView tvAdd;
+    private TextView tvCount;
 
     ArrayList<SportBean> project = new ArrayList<>();
     private ProjectAdpter projectAdpter;
     private CountDownTimer timer;
+    private static final String DATA = "data";
+    private int index;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setNavigationBar(this, View.GONE);
-
+        setNavigationBar();
         textView = (TextView) findViewById(R.id.textView);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         tvTime = (TextView) findViewById(R.id.tvTime);
-        tvAdd = (TextView) findViewById(R.id.tv_add);
+        tvCount = (TextView) findViewById(R.id.tv_count);
+        fab = findViewById(R.id.fab);
 
-        tvAdd.setOnClickListener(new View.OnClickListener() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        projectAdpter = new ProjectAdpter(project, this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.course_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setAdapter(projectAdpter);
+        initListener();
+        initProject();
+    }
+
+    private void initListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 showMyStyle();
             }
         });
+        fab.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                project.clear();
+                projectAdpter.notifyDataSetChanged();
+                return true;
+            }
+        });
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        projectAdpter = new ProjectAdpter(project, this);
         projectAdpter.setListener(new ProjectAdpter.Listener() {
+
             @Override
             public void clickItem(String s, int position) {
+                index = position;
                 notifyProjectAdapter(position);
                 setTime(project.get(position).getTime());
             }
@@ -65,12 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 projectAdpter.notifyDataSetChanged();
             }
         });
-        recyclerView.setLayoutManager(linearLayoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, LinearLayoutManager.VERTICAL);
-        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.course_divider));
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        recyclerView.setAdapter(projectAdpter);
-        initProject();
     }
 
     private void setTime(int time) {
@@ -86,10 +103,25 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                tvTime.setText("00:00");
+                notifyCount();
+                tvTime.setText("00 : 00");
             }
         };
         timer.start();
+    }
+
+    private void notifyCount() {
+        int count = project.get(index).getCount();
+        project.get(index).setCount(count + 1);
+        projectAdpter.notifyDataSetChanged();
+
+        int countTotol = 0;
+        for (SportBean sportBean : project) {
+            countTotol += sportBean.getCount();
+        }
+        int i = countTotol / (project.size());
+
+        tvCount.setText("已完成 " + i + " 组");
     }
 
     private void notifyProjectAdapter(int position) {
@@ -117,16 +149,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initProject() {
-        SportBean s1 = new SportBean(30, "开合跳", "个");
-        SportBean s2 = new SportBean(30, "深蹲跳", "个");
-        SportBean s3 = new SportBean(30, "高抬腿", "秒");
-        SportBean s4 = new SportBean(30, "后踢臀", "个");
-        project.add(s1);
-        project.add(s2);
-        project.add(s3);
-        project.add(s4);
+        Gson gson = new Gson();
+        String data = SPUtils.getInstance().getString(DATA);
+        ArrayList<SportBean> list = gson.fromJson(data, new TypeToken<ArrayList<SportBean>>() {
+        }.getType());
+        if (list != null) {
+            for (SportBean sportBean : list) {
+                SportBean s = new SportBean(sportBean.getTime(), sportBean.getName(), sportBean.getStr());
+                project.add(s);
+            }
+        }
+        if (project.size() == 0) {
+            SportBean s1 = new SportBean(10, "开合跳", "个");
+            SportBean s2 = new SportBean(10, "深蹲跳", "个");
+            SportBean s3 = new SportBean(10, "高抬腿", "秒");
+            SportBean s4 = new SportBean(10, "后踢臀", "个");
+            project.add(s1);
+            project.add(s2);
+            project.add(s3);
+            project.add(s4);
+        }
         projectAdpter.notifyDataSetChanged();
     }
+
 
     private void showMyStyle() {
         @SuppressLint("InflateParams") View view = LayoutInflater.from(this).inflate(R.layout.layout_test, null);
@@ -155,12 +200,21 @@ public class MainActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public static void setNavigationBar(Activity activity, int visible) {
-        View decorView = activity.getWindow().getDecorView();
-        //显示NavigationBar
-        if (View.GONE == visible) {
-            int option = SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            decorView.setSystemUiVisibility(option);
+    public void setNavigationBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    @Override
+    protected void onDestroy() {
+        for (SportBean sportBean : project) {
+            sportBean.setCount(0);
         }
+        Gson gson = new Gson();
+        String s = gson.toJson(project);
+        SPUtils.getInstance().put(DATA, s);
+        super.onDestroy();
     }
 }

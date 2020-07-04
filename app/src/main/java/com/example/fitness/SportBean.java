@@ -11,6 +11,15 @@ public class SportBean {
     String name;
     String str;
     boolean select;
+    int count;
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public boolean isSelect() {
         return select;
